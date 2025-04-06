@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+    <link rel="icon" href="../atm-machine-image.png" type="image/x-icon">
+    <link rel="stylesheet" href="../style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="../atm-machine-image.png" alt="atm-machine" class="img-fluid">
+            </div>
+            <div class="col-md-6 atm-content">
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#depositModal">Deposit</button>
+                <p style="display: none;">Total Amount: <span id="totalAmount">1000</span></p>
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#withdrawModal">Withdraw</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#checkBalanceModal">Check Balance</button>
+                <button type="button" class="btn btn-outline-secondary" id="exitButton">Exit</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+     <!-- Deposit Modal -->
+     <div class="modal fade" id="depositModal" tabindex="-1" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+         <div class="modal-content">
+             <div class="modal-header">
+                 <h5 class="modal-title" id="exampleModalCenterTitle">Enter Your Amount</h5>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal"
+                     aria-label="Close" onclick="depositModal"()></button>
+             </div>
+             <div class="modal-body">
+                <input type="text" id="amountInput" placeholder="Enter amount" class="form-control enter-amount">
+             </div>
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-outline-secondary" onclick="submitAmount()">Submit</button>
+             </div>
+         </div>
+        </div>
+    </div>
+
+    <!-- Amount Added Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    ✅ Amount added successfully!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Check Balance Modal -->
+    <div class="modal fade" id="checkBalanceModal" tabindex="-1" aria-labelledby="checkBalanceModalModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkBalanceModalModalLabel">Your Balance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    💰 Your Total Balance: <strong id="balanceAmount">0</strong>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="withdrawModalLabel">Withdraw Amount</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="withdrawInput" placeholder="Enter withdrawal amount" class="form-control enter-amount">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="confirmWithdraw()">Confirm Withdraw</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Amount Withdraw Success Modal -->
+    <div class="modal fade" id="withdrawSuccessModal" tabindex="-1" aria-labelledby="withdrawSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    ✅ Amount Withdraw successfully!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let totalAmount = 1000.00;
+        sessionStorage.setItem('BalanceAmount', totalAmount);
+        const depositModal = new bootstrap.Modal(document.getElementById('depositModal'));
+        const withdrawModal = new bootstrap.Modal(document.getElementById("withdrawModal"));
+        const balanceModal = new bootstrap.Modal(document.getElementById("checkBalanceModal"));
+        const successModal = new bootstrap.Modal(document.getElementById("successModal"));
+        const withdrawSuccessModal = new bootstrap.Modal(document.getElementById("withdrawSuccessModal"));
+
+        // Deposit amount
+        function submitAmount() {
+            const amount = parseFloat(document.getElementById("amountInput").value);
+            if (!isNaN(amount) && amount > 0) {
+                totalAmount += amount;
+                sessionStorage.setItem('BalanceAmount', totalAmount);
+                document.getElementById("totalAmount").innerText = totalAmount;
+                amountInput.value = ""; // Clear input
+                depositModal.hide(); // Close Bootstrap modal
+                setTimeout(() => {
+                    successModal.show(); // Show success modal after closing
+                }, 500); // Small delay for smooth transition
+            } else {
+                alert("Please enter a valid amount!");
+            }
+        }
+
+        // ✅ Confirm Withdraw Button
+        function confirmWithdraw() {
+            let balanceAmountWithdraw = Number(sessionStorage.getItem('BalanceAmount'));
+            const minBalance = 500.00;
+            console.log('balanceAmountWithdraw', balanceAmountWithdraw)
+            const withdrawAmount = parseFloat(document.getElementById("withdrawInput").value);
+            if (!isNaN(withdrawAmount) && withdrawAmount > 100) {
+                if (balanceAmountWithdraw - withdrawAmount >= minBalance) {
+                    balanceAmountWithdraw -= withdrawAmount;
+                    sessionStorage.setItem('BalanceAmount', balanceAmountWithdraw);
+                    document.getElementById("withdrawInput").value = ""; // Clear input
+                    withdrawModal.hide(); // Close withdraw modal
+                    setTimeout(() => {
+                        withdrawSuccessModal.show(); // Show success modal after closing
+                    }, 500); // Small delay for smooth transition
+                } else {
+                    alert("Insufficient balance!");
+                    document.getElementById("withdrawInput").value = ""; // Clear input
+                }
+            } else {
+                alert("Please enter a valid amount!. Amount should be morethan 100");
+            }
+        }
+
+        // Redirect to your home page URL 
+        document.getElementById("exitButton").addEventListener("click", function() {
+            alert("Thank you! Logging out.");
+            window.location.href = "/index.html"; // Redirect to login page
+        });
+
+         // show Balance Amount Modal
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("checkBalanceModal").addEventListener("click", () => {
+                const balanceText = document.getElementById("balanceAmount");
+                // ✅ Temporarily clear and force re-render
+                
+                setTimeout(() => {
+                balanceModal.show(); 
+                balanceAmount = sessionStorage.getItem('BalanceAmount');
+                balanceText.innerText = balanceAmount; // Set updated balance
+                }, 50); // Small delay to ensure re-render
+            });
+        });
+    </script>
+  </body>
+</html>

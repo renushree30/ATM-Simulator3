@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ATM Machine</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="atm-container">
+      <div class="atm-screen">Welcome</div>
+      <div class="pin-container">
+        <div class="pin-title">Enter your 4-digit PIN</div>
+        <input
+          type="password"
+          name="pin-code"
+          class="pin-input"
+          pattern="\d*"
+          maxlength="4"
+          inputmode="numeric"
+          autocomplete="off"
+          id="pinInput"
+        />
+      </div>
+      <div class="atm-buttons">
+        <button onclick="validateUserPIN()">Pin</button>
+      </div>
+      <p id="result"></p>
+    </div>
+  </body>
+
+  <script src="/index.js"></script>
+</html>
